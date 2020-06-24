@@ -1,6 +1,8 @@
 import React from 'react';
 import { Feather as Icon } from '@expo/vector-icons';
 
+import Capitals from '../../components/Capitals';
+
 import {
 	Container,
 	Header,
@@ -8,14 +10,7 @@ import {
 	SearchForm,
 	SearchInput,
 	SearchButton,
-	Hr,
-	CapitalsContainer,
-	Indicator,
-	IndicatorText,
-	CityContainer,
-	City,
-	Degrees,
-	CityName
+	Hr
 } from './styles';
 
 export default function Home() {
@@ -35,51 +30,8 @@ export default function Home() {
 
 			<Hr />
 
-			<CapitalsContainer>
-				<Title>Capitais</Title>
+			<Capitals />
 
-				<Indicator>
-					<IndicatorText>Min</IndicatorText>
-					<IndicatorText>Máx</IndicatorText>
-				</Indicator>
-
-				<CityContainer>
-					<City>
-						<Degrees>18°</Degrees>
-						<Degrees>27°</Degrees>
-
-						<CityName>São Paulo</CityName>
-					</City>
-
-					<City>
-						<Degrees>20°</Degrees>
-						<Degrees>31°</Degrees>
-
-						<CityName>Rio de Janeiro</CityName>
-					</City>
-
-					<City>
-						<Degrees>14°</Degrees>
-						<Degrees>22°</Degrees>
-
-						<CityName>Belo Horizonte</CityName>
-					</City>
-
-					<City>
-						<Degrees>24°</Degrees>
-						<Degrees>37°</Degrees>
-
-						<CityName>Brasília</CityName>
-					</City>
-
-					<City>
-						<Degrees>05°</Degrees>
-						<Degrees>09°</Degrees>
-
-						<CityName>Curitiba</CityName>
-					</City>
-				</CityContainer>
-			</CapitalsContainer>
 		</Container>
 		</>
 	);
