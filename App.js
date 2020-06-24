@@ -1,19 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "react-native";
+
+import Home from './src/pages/Home';
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Weather Forecasting!</Text>
-    </View>
-  );
-}
+	return (
+		<>
+			<Home />
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+			<StatusBar
+				barStyle="light-content"
+				backgroundColor="#282a36"
+				translucent
+			/>
+		</>
+	);
+}
