@@ -9,7 +9,7 @@ export default function App() {
 			<Home />
 
 			<StatusBar
-				barStyle="light-content"
+				barStyle="default"
 				backgroundColor="#282a36"
 				translucent
 			/>

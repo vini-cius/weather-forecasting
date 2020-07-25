@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import {StyleSheet} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export const Container = styled(LinearGradient)`
@@ -22,26 +21,42 @@ export const SearchForm = styled.View`
 `;
 
 export const SearchInput = styled.TextInput`
-	flex: 1;
 	height: 50px;
 	background-color: #fff;
 	color: #333;
-	border-radius: 25px;
 	padding: 0 20px 0 20px;
 	font-size: 16px;
+	border-radius: 25px;
+	width: 100%;
 `
-export const SearchButton = styled.TouchableOpacity`
-	width: 50px;
-  height: 50px;
-  background-color: #8E4DFF;
-  border-radius: 25px;
-  justify-content: center;
-  align-items: center;
-  margin-left: 10px;
-`;
 
 export const Hr = styled.View`
-	height: ${StyleSheet.hairlineWidth};
+	height: 1px;
 	background-color: #fff;
 	margin-top: 32px;
+`;
+
+export const CityContainer = styled.View`
+	padding: 10px 15px;
+	margin: 5px 16px 5px 16px;
+	height: 200px;
+	background-color: #f1fa8c;
+`;
+
+export const CityTitle = styled.Text`
+	color: #44475a;
+	font-weight: bold;
+	font-size: 26px;
+`;
+
+export const Source = styled.Text`
+	color: #fff;
+	font-weight: bold;
+	margin: 10px auto;
+`;
+
+export const Date = styled.Text`
+	color: #fff;
+	font-weight: bold;
+	margin: 10px auto;
 `;

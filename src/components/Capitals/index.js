@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
+import { ACCUW_APIKEY } from 'react-native-dotenv';
 import apiAccuW from '../../services/accuwApi';
-import {ACCUW_APIKEY} from 'react-native-dotenv';
 
 import {
 	CapitalsContainer,
@@ -11,25 +11,45 @@ import {
 	City,
 	Degrees,
 	CityName,
-	Title
+	Title,
 } from './styles';
 
 export default function Capitals() {
+	const [capitals, setCapitals] = useState([]);
+
+	async function loadCapitalsWeatherData() {
+		const keyCapitals = [
+			{ name: 'São Paulo', key: '45881' },
+			{ name: 'Rio de Janeiro', key: '45449' },
+			{ name: 'Belo Horizonte', key: '44403'},
+			{ name: 'Brasília', key: '43348'},
+			{ name: 'Salvador', key: '43080'},
+			//{ name: 'Manaus', key: '42471'}
+		];
+
+		let data = [];
+
+		for (let i = 0; i < keyCapitals.length; i++){
+			const response = await apiAccuW.get(`forecasts/v1/daily/1day/${keyCapitals[i].key}`, {
+				params: {
+					apikey: ACCUW_APIKEY,
+					metric: true,
+					language: 'pt-br',
+				},
+			});
+
+			const { Temperature } = response.data.DailyForecasts[0];
+
+			const capitalTemp = {...Temperature, city: keyCapitals[i].name}
+
+			data.push(capitalTemp);
+		}
+
+		setCapitals(data);
+	}
+
 	useEffect(() => {
-		apiAccuW.get('cities/BR/search',{
-			params: {
-				q: 'Mauá',
-				offset: 20,
-				apikey: ACCUW_APIKEY,
-				language: 'pt-br',
-			}
-		})
-		.then(response => {
-			console.log(response.data);
-		})
-		.catch(err => {
-			console.log(err);
-		})
+		loadCapitalsWeatherData();
 	}, []);
 
 	return (
@@ -42,41 +62,16 @@ export default function Capitals() {
 			</Indicator>
 
 			<CityContainer>
-				<City>
-					<Degrees>18°</Degrees>
-					<Degrees>27°</Degrees>
+				{capitals.map((capital, index) => (
+				<City key={index}>
+					<Degrees>{Math.round(capital.Minimum.Value)}°</Degrees>
+					<Degrees>{Math.round(capital.Maximum.Value)}°</Degrees>
 
-					<CityName>São Paulo</CityName>
+					<CityName>{capital.city}</CityName>
 				</City>
-
-				<City>
-					<Degrees>20°</Degrees>
-					<Degrees>31°</Degrees>
-
-					<CityName>Rio de Janeiro</CityName>
-				</City>
-
-				<City>
-					<Degrees>14°</Degrees>
-					<Degrees>22°</Degrees>
-
-					<CityName>Belo Horizonte</CityName>
-				</City>
-
-				<City>
-					<Degrees>24°</Degrees>
-					<Degrees>37°</Degrees>
-
-					<CityName>Brasília</CityName>
-				</City>
-
-				<City>
-					<Degrees>05°</Degrees>
-					<Degrees>09°</Degrees>
-
-					<CityName>Curitiba</CityName>
-				</City>
+				))}
 			</CityContainer>
+
 		</CapitalsContainer>
 	);
 }
