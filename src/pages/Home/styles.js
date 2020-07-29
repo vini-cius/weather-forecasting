@@ -6,7 +6,7 @@ export const Container = styled(LinearGradient)`
 `;
 
 export const Header = styled.View`
-	padding: 42px 16px 26px 16px;
+	padding: 42px 16px 8px 16px;
 `;
 
 export const Title = styled.Text`
@@ -16,8 +16,10 @@ export const Title = styled.Text`
 `;
 
 export const SearchForm = styled.View`
+  justify-content: center;
+  align-items: center;
+
 	padding-top: 26px;
-	flex-direction: row;
 `;
 
 export const SearchInput = styled.TextInput`
@@ -29,24 +31,10 @@ export const SearchInput = styled.TextInput`
 	border-radius: 25px;
 	width: 100%;
 `
-
 export const Hr = styled.View`
 	height: 1px;
 	background-color: #fff;
 	margin-top: 32px;
-`;
-
-export const CityContainer = styled.View`
-	padding: 10px 15px;
-	margin: 5px 16px 5px 16px;
-	height: 200px;
-	background-color: #f1fa8c;
-`;
-
-export const CityTitle = styled.Text`
-	color: #44475a;
-	font-weight: bold;
-	font-size: 26px;
 `;
 
 export const Source = styled.Text`
@@ -58,5 +46,17 @@ export const Source = styled.Text`
 export const Date = styled.Text`
 	color: #fff;
 	font-weight: bold;
+	font-size: 18px;
 	margin: 10px auto;
+`;
+
+export const AutoInputContainer = styled.View`
+  position: absolute;
+  top: 76px;
+  width: 321px;
+	height: 150px;
+	z-index: 1;
+	elevation: 1;
+
+  background-color: #fff;
 `;

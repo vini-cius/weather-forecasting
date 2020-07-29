@@ -30,19 +30,24 @@ export default function Capitals() {
 		let data = [];
 
 		for (let i = 0; i < keyCapitals.length; i++){
-			const response = await apiAccuW.get(`forecasts/v1/daily/1day/${keyCapitals[i].key}`, {
-				params: {
-					apikey: ACCUW_APIKEY,
-					metric: true,
-					language: 'pt-br',
-				},
-			});
+			try {
+				const response = await apiAccuW.get(`forecasts/v1/daily/1day/${keyCapitals[i].key}`, {
+					params: {
+						apikey: ACCUW_APIKEY,
+						metric: true,
+						language: 'pt-br',
+					},
+				});
 
-			const { Temperature } = response.data.DailyForecasts[0];
+				const { Temperature } = response.data.DailyForecasts[0];
 
-			const capitalTemp = {...Temperature, city: keyCapitals[i].name}
+				const capitalTemp = {...Temperature, city: keyCapitals[i].name}
 
-			data.push(capitalTemp);
+				data.push(capitalTemp);
+
+			} catch (error) {
+
+			}
 		}
 
 		setCapitals(data);
