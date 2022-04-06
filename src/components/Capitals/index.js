@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Text } from 'react-native';
 
-import { ACCUW_APIKEY } from 'react-native-dotenv';
-import apiAccuW from '../../services/accuwApi';
+import { accuWeather } from '../../services/accuwApi';
 
 import {
 	CapitalsContainer,
@@ -21,40 +21,51 @@ export default function Capitals() {
 		const keyCapitals = [
 			{ name: 'São Paulo', key: '45881' },
 			{ name: 'Rio de Janeiro', key: '45449' },
-			{ name: 'Belo Horizonte', key: '44403'},
-			{ name: 'Brasília', key: '43348'},
-			{ name: 'Salvador', key: '43080'},
-			//{ name: 'Manaus', key: '42471'}
+			{ name: 'Belo Horizonte', key: '44403' },
+			{ name: 'Brasília', key: '43348' },
+			{ name: 'Salvador', key: '43080' },
 		];
 
 		let data = [];
 
-		for (let i = 0; i < keyCapitals.length; i++){
+		const promises = keyCapitals.map(async (capital) => {
 			try {
-				const response = await apiAccuW.get(`forecasts/v1/daily/1day/${keyCapitals[i].key}`, {
+				const response = await accuWeather.get(`/forecasts/v1/hourly/1hour/${capital.key}`, {
 					params: {
-						apikey: ACCUW_APIKEY,
-						metric: true,
-						language: 'pt-br',
+						metric: true
 					},
 				});
 
 				const { Temperature } = response.data.DailyForecasts[0];
-
-				const capitalTemp = {...Temperature, city: keyCapitals[i].name}
+				const capitalTemp = { ...Temperature, city: capital.name };
 
 				data.push(capitalTemp);
-
 			} catch (error) {
+				let message = 'Ocorreu um erro ao carregar os dados.';
 
+				if (error.response) {
+					message = error.response.data.Message;
+				}
+
+				data.push({
+					error: true,
+					city: capital.name,
+					message
+				});
 			}
-		}
+		});
+
+		await Promise.all(promises);
 
 		setCapitals(data);
 	}
 
 	useEffect(() => {
 		loadCapitalsWeatherData();
+
+		return () => {
+			setCapitals([]);
+		}
 	}, []);
 
 	return (
@@ -67,16 +78,24 @@ export default function Capitals() {
 			</Indicator>
 
 			<CityContainer>
-				{capitals.map((capital, index) => (
-				<City key={index}>
-					<Degrees>{Math.round(capital.Minimum.Value)}°</Degrees>
-					<Degrees>{Math.round(capital.Maximum.Value)}°</Degrees>
+				{capitals && capitals.map((capital) => (
+					<City key={capital.city}>
+						{capital.error ? (
+							<>
+								<CityName>{capital.city}</CityName>
+								<Text>{capital.message}</Text>
+							</>
+						) : (
+							<>
+								<Degrees>{Math.round(capital.Minimum.Value)}°</Degrees>
+								<Degrees>{Math.round(capital.Maximum.Value)}°</Degrees>
 
-					<CityName>{capital.city}</CityName>
-				</City>
+								<CityName>{capital.city}</CityName>
+							</>
+						)}
+					</City>
 				))}
 			</CityContainer>
-
 		</CapitalsContainer>
 	);
 }

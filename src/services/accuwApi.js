@@ -1,7 +1,11 @@
 import axios from 'axios';
 
-const apiAccuW = axios.create({
-	baseURL: "http://dataservice.accuweather.com/"
-});
+import { ACCUW_APIKEY } from '@env';
 
-export default apiAccuW;
+export const accuWeather = axios.create({
+	baseURL: "http://dataservice.accuweather.com",
+	params: {
+		apikey: ACCUW_APIKEY,
+		language: 'pt-br'
+	}
+});

@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Image } from 'react-native';
 import * as Location from "expo-location";
+import { format } from 'date-fns';
 
-import { ACCUW_APIKEY } from 'react-native-dotenv';
-import apiAccuW from '../../services/accuwApi';
+import { accuWeather } from '../../services/accuwApi';
 
 import { CityContainer, CityTitle, Temperature } from './styles';
 
 export default function ResultBox() {
-	const [initialPosition, setInitialPosition] = useState([0,0]);
-	const [currentCity, setCurrentCity] = useState();
-	const [nameCurrentCity, setNameCurrentCity] = useState({});
+	const [initialPosition, setInitialPosition] = useState([]);
+	const [currentCity, setCurrentCity] = useState(null);
 
 	async function loadPosition() {
-		const { status } = await Location.requestPermissionsAsync();
+		const { status } = await Location.requestForegroundPermissionsAsync();
 
 		if (status !== "granted") {
 			Alert.alert(
@@ -30,13 +29,11 @@ export default function ResultBox() {
 		setInitialPosition([latitude, longitude]);
 	}
 
-	async function getForecastGeolocation(){
+	async function getForecastGeolocation() {
 		try {
-			const response = await apiAccuW.get(`locations/v1/cities/geoposition/search`, {
+			const location = await accuWeather.get(`locations/v1/cities/geoposition/search`, {
 				params: {
-					apikey: ACCUW_APIKEY,
 					q: initialPosition.join(','),
-					language: 'pt-br',
 				},
 			});
 
@@ -44,44 +41,70 @@ export default function ResultBox() {
 				Key,
 				LocalizedName: city,
 				AdministrativeArea: { LocalizedName: state }
-			} = response.data;
+			} = location.data;
 
-			setNameCurrentCity({
-				state: state,
-				city: city
-			});
+			const cityName = `${city} - ${state}`;
 
-			console.log(nameCurrentCity)
-
-			const respCurrentCity = await apiAccuW.get(`forecasts/v1/hourly/1hour/${Key}`, {
+			const currentCity = await accuWeather.get(`/forecasts/v1/hourly/1hour/${Key}`, {
 				params: {
-					apikey: ACCUW_APIKEY,
 					metric: true,
-					details: true,
-					language: 'pt-br',
+					details: true
 				},
 			});
 
-			setCurrentCity(respCurrentCity.data);
+			const {
+				DateTime,
+				WeatherIcon,
+				IconPhrase,
+				Temperature,
+				RealFeelTemperature,
+				RelativeHumidity,
+				PrecipitationProbability,
+				ThunderstormProbability,
+				MobileLink
+			} = currentCity.data[0];
 
-			console.log(currentCity);
+			const data = {
+				cityName,
+				DateTimeFormated: format(DateTime, 'dd/MM/yyyy HH:mm'),
+				WeatherIcon,
+				IconPhrase,
+				Temperature,
+				RealFeelTemperature,
+				RelativeHumidity,
+				PrecipitationProbability,
+				ThunderstormProbability,
+				MobileLink
+			};
 
+			setCurrentCity(data);
 		} catch (error) {
-			console.log(error);
-			return;
+			let message = 'Ocorreu um erro ao obter a previsão do tempo.';
+
+			if (error.response) {
+				message = error.response.data.Message;
+			}
+
+			Alert.alert("Ooops...", message);
 		}
 	}
 
 	useEffect(() => {
 		loadPosition();
-		//getForecastGeolocation();
 	}, []);
+
+	useEffect(() => {
+		if (initialPosition.length) {
+			//getForecastGeolocation();
+		}
+	}, [initialPosition]);
 
 	return (
 		<CityContainer>
-			<CityTitle>Mauá - São Paulo</CityTitle>
-			<Temperature>20°C Nublado <Image source={require("../../assets/weatherIcon/07.png")} /></Temperature>
-
+			<CityTitle>{currentCity ? currentCity.cityName : 'loading...'}</CityTitle>
+			<Temperature>
+				<Image source={{ uri: "https://developer.accuweather.com/sites/default/files/01-s.png" }} />
+			</Temperature>
 		</CityContainer>
 	);
 }
